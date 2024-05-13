@@ -10,6 +10,8 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(OpenCV 4 REQUIRED)
+
+
 catkin_package(
   INCLUDE_DIRS
   CATKIN_DEPENDS roscpp
@@ -25,5 +27,7 @@ include_directories(
     include
   )
 
-add_executable(crosshair src/crosshair.cpp)
+add_library(crosshair_lib src/crosshair.cpp)
+add_executable(crosshair src/crosshair_node.cpp)
+
 target_link_libraries(crosshair ${catkin_LIBRARIES} ${OpenCV_INCLUDE_DIRS})
