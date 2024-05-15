@@ -1,1 +1,2 @@
-video_stream_topic: "/camera/color/image_raw"
+image_topic: "front_cam/camera/image"
+crosshair_image_path: "/assets/kenney_crosshair-pack/PNG/White/crosshair099.png"

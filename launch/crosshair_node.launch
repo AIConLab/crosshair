@@ -1,0 +1,7 @@
+<launch>
+    <!-- Load parameters from YAML file -->
+    <rosparam file="$(find crosshair)/params/crosshair_params.yaml" command="load"/>
+
+    <!-- Launch the crosshair node -->
+    <node name="crosshair" pkg="crosshair" type="crosshair" output="screen"/>
+</launch>
