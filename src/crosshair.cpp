@@ -2,8 +2,6 @@
 #include <cv_bridge/cv_bridge.h>
 #include <ros/package.h>
 #include <sensor_msgs/image_encodings.h>
-#include <string>
-#include <vector>
 
 Crosshair::Crosshair(ros::NodeHandle& nh) : _nh(nh), _it(nh) 
 {      
@@ -77,7 +75,6 @@ void Crosshair::_overlay_with_alpha_channel(cv::Mat& frame, cv::Mat& overlay, cv
                 }
             }
         }
-        ROS_INFO("Applied alpha channel overlay");
     }
     else
     {
