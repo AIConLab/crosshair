@@ -23,8 +23,12 @@ include_directories(
 )
 
 add_library(crosshair_lib src/crosshair.cpp)
-add_executable(crosshair src/crosshair_node.cpp)
+add_executable(crosshair_node src/crosshair_node.cpp)
 
 # Correct the linking for OpenCV and add the crosshair_lib
-target_link_libraries(crosshair_lib ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})  
-target_link_libraries(crosshair crosshair_lib)  
+target_link_libraries(crosshair_lib ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+target_link_libraries(crosshair_node crosshair_lib ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+
+install(TARGETS crosshair_node
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)

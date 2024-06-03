@@ -9,11 +9,13 @@ Crosshair::Crosshair(ros::NodeHandle& nh) : _nh(nh), _it(nh)
 
     // Retrieve the topic name from the parameter server
     std::string image_topic;
-    _nh.getParam("/image_topic", image_topic);
+    _nh.param<std::string>("image_topic", image_topic, "default_topic");
 
     // Setup subscriber and publisher
     _image_sub = _it.subscribe(image_topic, 1, &Crosshair::_imageCallback, this);
     _image_pub = _it.advertise("/image_with_crosshair", 1);
+
+    ROS_INFO("Crosshair node initialized");
 }
 
 Crosshair::~Crosshair() 
@@ -24,7 +26,7 @@ void Crosshair::_loadCrosshairImage()
 {
     // Get the relative path from the parameter server
     std::string relative_path;
-    if (!_nh.getParam("crosshair_image_path", relative_path)) 
+    if (!_nh.param<std::string>("crosshair_image_path", relative_path, "")) 
     {
         ROS_ERROR("Failed to get crosshair image path from parameters");
         return;
@@ -39,12 +41,15 @@ void Crosshair::_loadCrosshairImage()
     {
         ROS_ERROR("Failed to load crosshair image from %s", full_path.c_str());
     }
+    else 
+    {
+        ROS_INFO("Successfully loaded crosshair image from %s", full_path.c_str());
+    }
 }
+
 
 void Crosshair::_overlay_with_alpha_channel(cv::Mat& frame, cv::Mat& overlay, cv::Point coordinate)
 {
-    ROS_INFO("Overlaying with alpha channel");
-
     std::vector<cv::Mat> channels;
     cv::split(overlay, channels);  // Split the overlay into channels
     cv::Mat rgb, alpha;
@@ -84,14 +89,11 @@ void Crosshair::_overlay_with_alpha_channel(cv::Mat& frame, cv::Mat& overlay, cv
 
 void Crosshair::_overlay_no_alpha_channel(cv::Mat& frame, cv::Mat& overlay, cv::Point coordinate)
 {
-    ROS_INFO("Overlaying without alpha channel");
-
     cv::Rect roi(coordinate.x - overlay.cols / 2, coordinate.y - overlay.rows / 2, overlay.cols, overlay.rows);
 
     if (0 <= roi.x && 0 <= roi.width && roi.x + roi.width <= frame.cols && 0 <= roi.y && 0 <= roi.height && roi.y + roi.height <= frame.rows)
     {
         overlay.copyTo(frame(roi));
-        ROS_INFO("Applied overlay");
     }
     else
     {
@@ -104,7 +106,6 @@ void Crosshair::_imageCallback(const sensor_msgs::ImageConstPtr& msg)
     try
     {
         cv::Mat frame = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8)->image;
-        ROS_INFO("Received image with size: %d x %d", frame.cols, frame.rows);
 
         // Proceed with further processing only if the image is valid
         if (frame.empty())
